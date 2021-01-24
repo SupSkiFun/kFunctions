@@ -8,7 +8,7 @@ $mhash = @{
     Path = 'C:\Users\ja0310\scripts\AdvFunc\kFunctions\1.1.1.1\kFunctions.psd1'
     FunctionsToExport = 'Get-K8sAPIInfo'
     ProjectUri = 'https://github.com/SupSkiFun/kFunctions'
-    ReleaseNotes = 'Read Examples and Notes for function use.'
+    ReleaseNotes = 'Read Examples and Notes for function use.  Written for PowerShell 7.'
     FileList = @(
         'kFunctions.psd1'
         'kFunctions.psm1'

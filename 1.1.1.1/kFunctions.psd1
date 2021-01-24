@@ -107,7 +107,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Read Examples and Notes for function use.'
+        ReleaseNotes = 'Read Examples and Notes for function use.  Written for PowerShell 7.'
 
         # Prerelease string of this module
         # Prerelease = ''
