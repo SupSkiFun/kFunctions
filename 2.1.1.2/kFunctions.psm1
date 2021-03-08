@@ -14,19 +14,23 @@ URI that has been proxied via kubectl.
 .OUTPUTS
 pscustombobject SupSkiFun.Kubernetes.API.Info
 .NOTES
-1.  Command works both locally (Linux) or remotely (Linux or Windows) with proper credentials.
+1.  Command works both locally and remotely (Linux or Windows).
 2.  For the command to work properly
-    Ensure that the API has been proxied, akin to:  kubectl proxy --port 8888 &
+    Ensure that the API has been proxied:  Start-Job -ScriptBlock {kubectl proxy --port 8888}
     Run the command, returning the information into a variable:  $myVar = Get-K8sAPIInfo
-2.  The DefaultDisplayPropertySet = "GroupName","GroupVersion","ResourceKind","ResourceName"
+3.  The DefaultDisplayPropertySet = "GroupName","GroupVersion","ResourceKind","ResourceName"
     To see all properties, issue either:
         $myVar | Format-List -Property *
         $myVar | Select-Object -Property *
+4. If using microK8s it may be necessary to run 'microk8s kubectl' in place of 'kubectl'.
 .EXAMPLE
+
+Note: Any free port above 1024 can be used; if using a port different than 8888, substitute accordingly in both references below.
+Note: If using microK8s it may be necessary to run 'microk8s kubectl' in place of 'kubectl'.
+
 Before this Advanced Function will work, a proxy to the API must be configured.
 
-Note any free port above 1024 can be used; if using a port different than 8888, substitute accordingly in both references below.
-    kubectl proxy --port 8888 &
+    Start-Job -ScriptBlock {kubectl proxy --port 8888}
 
 Once the proxy is established:
     $myVar = Get-K8sAPIInfo -Uri http://localhost:8888

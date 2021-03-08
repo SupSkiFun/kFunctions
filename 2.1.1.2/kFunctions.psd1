@@ -108,7 +108,7 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = 'Read Examples and Notes for function use.
-        Updated to work with PowerShell 5; still works well with PowerShell 7.'
+        Updated to work with PowerShell 5; preferred version is PowerShell 7 (Linux or Windows).'
 
         # Prerelease string of this module
         # Prerelease = ''
