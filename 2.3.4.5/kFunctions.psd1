@@ -108,7 +108,7 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = 'Read Examples and Notes for function use.
-        MOdified code to pull resources from /v1 path; the core group.
+        Modified code to pull resources from /v1 path; the core group.
         Tested with PowerShell 5; preferred version is PowerShell 7 (Linux or Windows).'
 
         # Prerelease string of this module
