@@ -102,7 +102,7 @@ Function Get-K8sAPIInfo
                 $resi = [K8sAPI]::GetResourceInfo($url)
                 foreach ($res in $resi)
                 {
-                    $lo = [K8sAPI]::MakeObj2($api.name , $grv , $res , $prv)
+                    $lo = [K8sAPI]::MakeObj($api.name , $grv , $res , $prv)
                     $lo
                 }
             }

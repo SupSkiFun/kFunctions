@@ -37,7 +37,7 @@ class K8sAPI
         return $lo
     }
 
-    static [pscustomobject] MakeObj2 (
+    static [pscustomobject] MakeObj (
             [string] $nom ,
             [psobject] $grv ,
             [psobject] $res ,
