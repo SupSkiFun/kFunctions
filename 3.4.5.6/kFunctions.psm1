@@ -25,7 +25,7 @@ pscustombobject SupSkiFun.Kubernetes.API.Info
         $myVar | Format-List -Property *
         $myVar | Select-Object -Property *
 4. If using microK8s it may be necessary to run 'microk8s kubectl' in place of 'kubectl'.
-5. For PowerShell 7, use 127.0.0.1 instead of localhost.  Using localhost is much slower.
+5. For PowerShell 7, ensure the use of 127.0.0.1 instead of localhost.  Using localhost is far slower.
 .EXAMPLE
 Please Read:
 
@@ -117,5 +117,153 @@ Function Get-K8sAPIInfo
             DefaultDisplayPropertySet = "GroupName","GroupVersion","ResourceKind","ResourceName"
         }
         Update-TypeData @TypeData -Force
+    }
+}
+
+<#
+.SYNOPSIS
+Produces an object of Kubernetes NameSpaces.
+.DESCRIPTION
+Produces an object of Kubernetes Namespaces via proxied connection.
+See Notes and Examples.
+.PARAMETER Uri
+URI that has been proxied via kubectl.
+.INPUTS
+URI that has been proxied via kubectl.
+.OUTPUTS
+pscustombobject SupSkiFun.Kubernetes.NameSpace.Info
+.NOTES
+1.  Command works both locally (Linux) and remotely (Linux or Windows).
+2.  For this Advanced Function to work properly:
+    a) Ensure that the API has been proxied:
+        Start-Job -ScriptBlock {kubectl proxy --port 8888}
+    b) Run the command, returning the information into a variable:
+        $myVar = Get-NameSpace -Uri http://127.0.0.1:8888
+3. If using microK8s it may be necessary to run 'microk8s kubectl' in place of 'kubectl'.
+4. For PowerShell 7, ensure the use of 127.0.0.1 instead of localhost.  Using localhost is far slower.
+.EXAMPLE
+Please Read:
+
+Note: Any free port above 1024 can be used; if using a port different than 8888, substitute accordingly.
+Note: If using microK8s it may be necessary to run 'microk8s kubectl' in place of 'kubectl'.
+
+Before this Advanced Function will work, a proxy to the API must be configured.
+    Start-Job -ScriptBlock {kubectl proxy --port 8888}
+
+Once the proxy is established:
+    Get-NameSpace -Uri http://127.0.0.1:8888
+#>
+
+Function Get-NameSpace
+{
+    [cmdletbinding()]
+    Param
+    (
+        [Parameter(Mandatory = $true , ValueFromPipeline = $true)]
+        [Uri] $Uri
+    )
+
+    Begin
+    {
+        if (-not([K8sAPI]::CheckUri($uri)))
+        {
+            Write-Output $(([K8sAPI]::mesg) + $uri)
+            break
+        }
+
+        $urln = ($($Uri.AbsoluteUri)+$([K8sAPI]::urin))
+    }
+
+    Process
+    {
+        $apin = [K8sAPI]::GetApiInfo($urln)
+        foreach ($ns in $apin.items)
+        {
+            $lo = [K8sAPI]::MakeNameSpaceObj($ns)
+            $lo
+        }
+    }
+}
+
+<#
+.SYNOPSIS
+Produces an object of Kubernetes Pods.
+.DESCRIPTION
+Produces an object of Pods and their container(s) via proxied connection.
+See Notes and Examples.
+.PARAMETER Uri
+URI that has been proxied via kubectl.
+.INPUTS
+URI that has been proxied via kubectl.
+.OUTPUTS
+pscustombobject SupSkiFun.Kubernetes.Pods.Info
+.NOTES
+1.  Command works both locally (Linux) and remotely (Linux or Windows).
+2.  For this Advanced Function to work properly:
+    a) Ensure that the API has been proxied:
+        Start-Job -ScriptBlock {kubectl proxy --port 8888}
+    b) Run the command, returning the information into a variable:
+        $myVar = Get-Pod -Uri http://127.0.0.1:8888
+3. If using microK8s it may be necessary to run 'microk8s kubectl' in place of 'kubectl'.
+4. For PowerShell 7, ensure the use of 127.0.0.1 instead of localhost.  Using localhost is far slower.
+.EXAMPLE
+Please Read:
+
+Note: Any free port above 1024 can be used; if using a port different than 8888, substitute accordingly.
+Note: If using microK8s it may be necessary to run 'microk8s kubectl' in place of 'kubectl'.
+
+Before this Advanced Function will work, a proxy to the API must be configured.
+    Start-Job -ScriptBlock {kubectl proxy --port 8888}
+
+Once the proxy is established:
+    $myVar = Get-Pod -Uri http://127.0.0.1:8888
+
+Display all pods:
+    $myVar
+
+Drill into one pod's labels:
+    ($myVar[0]).Labels
+
+Drill into one pod's container(s):
+    ($myVar[0]).Containers
+
+Drill into one pod's container's Environment:
+    ($myVar[0]).Containers[0].Environment
+
+Drill into one pod's container's Image:
+    ($myVar[0]).Containers[0].Image
+
+Convert the entire object to JSON:
+    $myVar | ConvertTo-Json -Depth 10
+#>
+
+Function Get-Pod
+{
+    [cmdletbinding()]
+    Param
+    (
+        [Parameter(Mandatory = $true , ValueFromPipeline = $true)]
+        [Uri] $Uri
+    )
+
+    Begin
+    {
+        if (-not([K8sAPI]::CheckUri($uri)))
+        {
+            Write-Output $(([K8sAPI]::mesg) + $uri)
+            break
+        }
+
+        $urlp = ($($Uri.AbsoluteUri)+$([K8sAPI]::urip))
+    }
+
+    Process
+    {
+        $apip = [K8sAPI]::GetApiInfo($urlp)
+        foreach ($pod in $apip.items)
+        {
+            $lo = [K8sAPI]::MakePodObj($pod)
+            $lo
+        }
     }
 }

@@ -1,7 +1,7 @@
 class K8sAPI
 {
-    static $uric = 'api/v1/'
-    static $uria = 'apis/'
+    static $uric = '/api/v1/'
+    static $uria = '/apis/'
     static $urip = '/api/v1/pods'
     static $urin = '/api/v1/namespaces/'
     static $mesg = "Terminating.  Non-valid URL detected.  Submitted URL:  "
@@ -116,6 +116,4 @@ class K8sAPI
         $lo.PSObject.TypeNames.Insert(0,'SupSkiFun.Kubernetes.Pod.Info')
         return $lo
     }
-
-
 }
