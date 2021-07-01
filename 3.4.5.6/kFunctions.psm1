@@ -71,9 +71,9 @@ Function Get-K8sAPIInfo
 
     Begin
     {
-        if ( ([uri] $uri).IsAbsoluteUri -eq $false )
+        if (-not([K8sAPI]::CheckUri($uri)))
         {
-            Write-Output "Terminating.  Non-valid URL detected.  Submitted URL:  $uri"
+            Write-Output $(([K8sAPI]::mesg) + $uri)
             break
         }
 
