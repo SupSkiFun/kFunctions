@@ -237,6 +237,114 @@ Convert the entire object to JSON:
     $myVar | ConvertTo-Json -Depth 10
 #>
 
+<#
+.SYNOPSIS
+Returns a specified Kubernetes Resource.
+.DESCRIPTION
+Returns a specified Kubernetes Resource across all NameSpaces.
+See Notes and Examples.
+.PARAMETER Uri
+Mandatory.  URI that has been proxied via kubectl.
+.PARAMETER ResourceName
+Mandatory.  v1 API Resource to retrieve.  One of:  bindings, componentstatuses, 
+configmaps, endpoints, events, limitranges, namespaces, nodes, 
+persistentvolumeclaims, persistentvolumes, pods, podtemplates, 
+replicationcontrollers, resourcequotas, secrets, serviceaccounts, or services
+.PARAMETER DetailLevel
+Optional.  Least to most verbose:  Regular, High, or Full.  Defaults to Regular.   
+.INPUTS
+URI that has been proxied via kubectl.
+.OUTPUTS
+pscustombobject
+.NOTES
+1.  Command works both locally (Linux) and remotely (Linux or Windows).
+2.  For this Advanced Function to work properly:
+    a) Ensure that the API has been proxied:
+      Start-Job -ScriptBlock {kubectl proxy --port 8888}
+    b) Run the command, returning the information into a variable:
+      $myVar = Get-K8sObject -ResourceName services -Uri http://127.0.0.1:8888
+3. With microK8s try 'microk8s kubectl' in place of 'kubectl'.
+4. Ensure the use of 127.0.0.1 instead of localhost.
+.EXAMPLE
+Please Read:
+
+Note: Any free port above 1024 can be used; if using a port different than 8888, substitute accordingly.
+Note: If using microK8s it may be necessary to run 'microk8s kubectl' in place of 'kubectl'.
+
+Before this Advanced Function will work, a proxy to the API must be configured.
+    Start-Job -ScriptBlock {kubectl proxy --port 8888}
+
+Once the proxy is established (Regular DetailLevel):
+    $myVar = Get-K8sObject -ResourceName services -Uri http://127.0.0.1:8888
+    $myvar
+    $myvar.annotations
+    $myvar.annotations | Format-List *
+
+Once the proxy is established (Full DetailLevel):
+    $myVar = Get-K8sObject -ResourceName services -Uri http://127.0.0.1:8888 -DetailLevel Full
+    $myvar
+    $myVar | Format-List *
+    $myVar | ConvertTo-Json -Depth 20
+#>
+
+Function Get-K8sObject
+{
+    [cmdletbinding()]
+    Param
+    (
+        [Parameter(Mandatory = $true , ValueFromPipeline = $true)]
+        [Uri] $Uri,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateSet(
+            "bindings",
+            "componentstatuses",
+            "configmaps",
+            "endpoints",
+            "events",
+            "limitranges",
+            "namespaces",
+            "nodes",
+            "persistentvolumeclaims",
+            "persistentvolumes",
+            "pods",
+            "podtemplates",
+            "replicationcontrollers",
+            "resourcequotas",
+            "secrets",
+            "serviceaccounts",
+            "services"
+            )]
+        [String] $ResourceName,
+
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Regular", "High", "Full")]
+        [String] $DetailLevel = "Regular"
+
+    )
+
+    Begin
+    {
+        if (-not([K8sAPI]::CheckUri($uri)))
+        {
+            Write-Output $(([K8sAPI]::mesg) + $uri)
+            break
+        }
+
+        $urlr = ($($Uri.AbsoluteUri)+"/api/v1/$ResourceName")
+    }
+
+    Process
+    {
+        $apir = [K8sAPI]::GetApiInfo($urlr)
+        switch ($DetailLevel) {
+            "Regular" {$apir.items.metadata}
+            "High" {$apir.items}
+            "Full" {$apir}
+        }
+    }
+}
+
 Function Get-K8sPod
 {
     [cmdletbinding()]

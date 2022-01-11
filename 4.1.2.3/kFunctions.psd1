@@ -69,7 +69,7 @@ Description = 'PowerShell Advanced Functions for Kubernetes.'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Get-K8sAPIInfo'  , 'Get-K8sNamespace' , 'Get-K8sPod'
+FunctionsToExport = 'Get-K8sAPIInfo', 'Get-K8sNamespace', 'Get-K8sObject', 'Get-K8sPod'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
@@ -95,8 +95,8 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'API', 'MicroK8s', 'K8s', 'Kubernetes', 'Namespace' , 'Pod'
-
+        Tags = 'API', 'MicroK8s', 'K8s', 'Kubernetes'
+        
         # A URL to the license for this module.
         # LicenseUri = ''
 
@@ -108,8 +108,9 @@ PrivateData = @{
 
         # ReleaseNotes of this module
         ReleaseNotes = 'Read Examples and Notes for function use.
-        Renamed Get-Namespace to Get-K8sNamespace.
-        Renamed Get-Pod to Get-K8sPod.
+        Added Get-K8sObject to query all v1 Resources (version 1.23).
+        Renamed Get-Namespace to Get-K8sNamespace.  Kept for reference.  Better output in Get-K8sObject.
+        Renamed Get-Pod to Get-K8sPod.  Kept as an alternate method for retrieving pods with containers.
         Tested with PowerShell 7 against Kubernetes v1.23.0.'
 
         # Prerelease string of this module
