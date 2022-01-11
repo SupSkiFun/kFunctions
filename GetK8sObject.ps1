@@ -24,9 +24,10 @@ Function Get-K8sObject
     [cmdletbinding()]
     Param
     (
-        [Parameter(Mandatory = $true , ValueFromPipeline = $true)]
-        [Uri] $Uri,
-
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Regular", "High", "Full")]
+        [String] $DetailLevel = "Regular",    
+    
         [Parameter(Mandatory = $true)]
         [ValidateSet(
             "bindings",
@@ -46,12 +47,11 @@ Function Get-K8sObject
             "secrets",
             "serviceaccounts",
             "services"
-            )]
+        )]
         [String] $ResourceName,
 
-        [Parameter(Mandatory = $false)]
-        [ValidateSet("Regular", "High", "Full")]
-        [String] $DetailLevel = "Regular"
+        [Parameter(Mandatory = $true , ValueFromPipeline = $true)]
+        [Uri] $Uri
 
     )
 
