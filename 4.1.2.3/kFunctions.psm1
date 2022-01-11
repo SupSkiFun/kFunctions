@@ -189,15 +189,16 @@ Function Get-K8sNamespace
 .SYNOPSIS
 Returns a specified Kubernetes Resource.
 .DESCRIPTION
-Returns a specified Kubernetes Resource across all NameSpaces.
+Returns a specified v1 or apps/v1 Kubernetes Resource across all NameSpaces.
 See Notes and Examples.
 .PARAMETER Uri
 Mandatory.  URI that has been proxied via kubectl.
 .PARAMETER ResourceName
-Mandatory.  v1 API Resource to retrieve.  One of:  bindings, componentstatuses,
-configmaps, endpoints, events, limitranges, namespaces, nodes,
-persistentvolumeclaims, persistentvolumes, pods, podtemplates,
-replicationcontrollers, resourcequotas, secrets, serviceaccounts, or services
+Mandatory.  v1 or apps/v1 API Resource to retrieve.  One of:
+bindings, componentstatuses, configmaps, controllerrevisions, daemonsets,
+deployments, endpoints, events, limitranges, namespaces, nodes,
+persistentvolumeclaims, persistentvolumes, pods, podtemplates, replicasets,
+replicationcontrollers, resourcequotas, secrets, serviceaccounts, services, or statefulsets
 .PARAMETER DetailLevel
 Optional.  Least to most verbose:  Regular, High, or Full.  Defaults to Regular.
 .INPUTS
@@ -249,6 +250,9 @@ Function Get-K8sObject
             "bindings",
             "componentstatuses",
             "configmaps",
+            "controllerrevisions",
+            "daemonsets",
+            "deployments",
             "endpoints",
             "events",
             "limitranges",
@@ -258,11 +262,13 @@ Function Get-K8sObject
             "persistentvolumes",
             "pods",
             "podtemplates",
+            "replicasets",
             "replicationcontrollers",
             "resourcequotas",
             "secrets",
             "serviceaccounts",
-            "services"
+            "services",
+            "statefulsets"
         )]
         [String] $ResourceName,
 
@@ -278,7 +284,15 @@ Function Get-K8sObject
             break
         }
 
-        $urlr = ($($Uri.AbsoluteUri)+"/api/v1/$ResourceName")
+        $apps = "controllerrevisions", "daemonsets", "deployments", "replicasets", "statefulsets"
+
+        if ($ResourceName -in $apps) {
+            $urlr = ($($Uri.AbsoluteUri)+"/apis/apps/v1/$ResourceName")
+        }
+        else {
+            $urlr = ($($Uri.AbsoluteUri)+"/api/v1/$ResourceName")
+        }
+
     }
 
     Process
